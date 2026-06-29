@@ -48,3 +48,13 @@ basic CORE provenance rule: no CORE event may be instruction-bearing or use
 This is only a structural validator. A separate human provenance audit is still
 needed before running experiments because structured fields can also contain
 instruction-like values if the scenario author is careless.
+
+## Current Measurement Caution
+
+The first runner reports `form_task`, which is useful for the G1 smoke test but
+is not identical to attack success. Some CORE cases, especially suppression
+cases, may form a legitimate safety task rather than the harmful task described
+by `attack_success_condition`.
+
+Before claiming attack success rates, add a second-stage evaluator or manual
+audit that labels `harmful_formation` separately from generic task formation.
