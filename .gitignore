@@ -1,0 +1,19 @@
+tmp/
+paper/build/
+
+# Local secrets and provider credentials.
+.env
+.env.*
+*.token
+token.txt
+private.toml
+
+# Python/runtime caches.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local legacy material from the previous AffectOptOut project in this workspace.
+_legacy_affectoptout/
