@@ -99,6 +99,8 @@ reward filtering, and user accept/reject/ignore feedback.
 - [Pilot scenario data](data/pilot/scenarios_v0.json):
   30 structured benign / CTRL / CORE scenarios for the first falsification
   pilot, with a validator in [scripts/validate_pilot_scenarios.py](scripts/validate_pilot_scenarios.py).
+- [360 model selection notes](docs/360_model_selection.md):
+  smoke-test results and recommended model set for the first pilot.
 - [Opus discussions](docs/discussions/):
   raw consultation notes with Claude Opus 4.8 used for critique and pilot
   design. The latest TDSC-setting critique is
