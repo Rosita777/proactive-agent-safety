@@ -49,8 +49,17 @@ more judgment over ambient evidence -> more proactive but more attackable
 
 ## Current Planned Setting
 
-The target setting is an ambient work assistant for research/development
-workflows. It observes structured events from sources such as:
+The target setting is an ambient work assistant. For the next pilot, the primary
+domains are narrowed to:
+
+- calendar/email collaboration;
+- coding/development.
+
+Research/writing is no longer a main pilot domain because the harms are softer
+and harder to label objectively. It may return later as a robustness appendix if
+the core phenomenon is established.
+
+The assistant observes structured events from sources such as:
 
 - browser activity;
 - VSCode or local file activity;
@@ -60,7 +69,7 @@ workflows. It observes structured events from sources such as:
 - local documents;
 - user memory and past feedback.
 
-The intended pilot architecture is:
+The intended pilot architecture is frozen as:
 
 ```text
 structured event store
@@ -69,6 +78,11 @@ structured event store
 -> reward or validity filter
 -> notification / approval surface
 ```
+
+The event store must keep explicit provenance fields such as `source_id`,
+`channel`, `trust_tier`, `verified_identity`, `timestamp`, and `raw_ref`.
+Natural-language event summaries alone are not enough for the main security
+claim.
 
 This is based on observed proactive-agent systems such as ProactiveAgent /
 ProactiveBench, which use ActivityWatch-style traces, LLM task prediction,
@@ -84,7 +98,9 @@ reward filtering, and user accept/reject/ignore feedback.
   defenses apply to proactive task formation.
 - [Opus discussions](docs/discussions/):
   raw consultation notes with Claude Opus 4.8 used for critique and pilot
-  design. These are working notes, not polished claims.
+  design. The latest TDSC-setting critique is
+  [opus48_tdsc_setting_discussion.md](docs/discussions/opus48_tdsc_setting_discussion.md).
+  These are working notes, not polished claims.
 
 ## Current Experimental Direction
 
@@ -110,6 +126,14 @@ Then evaluate:
 - Instruction Hierarchy-style prompts;
 - CaMeL-inspired strict and permissive variants;
 - provenance, diversity, confirmation, and intervention-budget defenses.
+
+Current attack-family priority:
+
+- central: metadata/correlation, cross-app identity confusion, and
+  reward/filter manipulation;
+- secondary: suppression/dedup/flooding and delayed memory/retrieval effects;
+- not a standalone attack family for now: approval fatigue, which should be
+  reported as attention cost unless we later run a human-subject study.
 
 The desired evidence is not "IPI defenses do not work." The desired evidence is:
 
@@ -163,10 +187,11 @@ Calibration references:
 
 Working target scale for a mature TDSC submission:
 
-- 3 realistic workflow domains: coding/development, research/writing, and
-  calendar/email collaboration;
-- 150-300 structured scenarios, each with paired benign, command-style IPI,
-  and instruction-free task-formation variants;
+- 2 primary workflow domains: calendar/email collaboration and
+  coding/development, with optional research/writing robustness experiments if
+  labels become defensible;
+- 150-300 structured scenarios, each with paired benign, command-style IPI, and
+  instruction-free task-formation variants;
 - 4-6 LLM/agent backbones or model configurations;
 - 6-8 defense configurations;
 - separate reporting for formation success, execution success, proactive
@@ -174,6 +199,35 @@ Working target scale for a mature TDSC submission:
 
 The immediate pilot can be much smaller, but it should be designed so the
 schema, metrics, and defenses scale toward this journal-level package.
+
+## Immediate Pilot and Kill Gates
+
+The next step is a small falsification pilot, not a full benchmark.
+
+Pilot target:
+
+- 30 scenarios across calendar/email and coding;
+- each scenario has benign, instruction-bearing CTRL, and instruction-free CORE
+  variants;
+- first-pass defenses: no defense, Spotlighting-style marking, CaMeL-strict,
+  and CaMeL-permissive;
+- first-pass metrics: Formation-ASR, legitimate proactive recall, false alarms,
+  attention cost, and provenance-audit pass rate.
+
+Kill gates before scaling:
+
+- G1: if undefended CORE Formation-ASR is below 40%, the instruction-free attack
+  spine is probably too weak.
+- G2: if CaMeL-permissive gets CORE-ASR below 10% while keeping legitimate
+  proactive recall above 85%, the claimed security/proactivity tradeoff is not
+  supported.
+- G3: if a simple `trust_tier` provenance rule blocks CORE attacks below 10%
+  ASR without meaningful recall loss, the problem collapses into ordinary
+  provenance checking.
+
+If any kill gate triggers, the project should stop scaling the current design
+and either reframe around a narrower measurement result or change the attack
+surface.
 
 ## Repository Hygiene
 
