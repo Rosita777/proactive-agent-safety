@@ -103,7 +103,9 @@ reward filtering, and user accept/reject/ignore feedback.
   smoke-test results and recommended model set for the first pilot.
 - [Opus discussions](docs/discussions/):
   raw consultation notes with Claude Opus 4.8 used for critique and pilot
-  design. The latest TDSC-setting critique is
+  design. The latest current-pilot critique is
+  [opus48_current_pilot_critique.md](docs/discussions/opus48_current_pilot_critique.md),
+  and the TDSC-setting critique is
   [opus48_tdsc_setting_discussion.md](docs/discussions/opus48_tdsc_setting_discussion.md).
   These are working notes, not polished claims.
 
@@ -231,6 +233,7 @@ Run a cheap CORE-only smoke test with:
 python3 scripts/run_pilot_360.py \
   --models qwen/qwen3-coder-plus \
   --variants core \
+  --prompt-mode no-defense \
   --timeout 60 \
   --retries 1
 ```
@@ -241,10 +244,15 @@ Summarize a run with:
 python3 scripts/summarize_pilot_results.py results/pilot/<run>.jsonl
 ```
 
-Current smoke-test status: `qwen/qwen3-coder-plus` formed a task on 21/30 CORE
-cases with 100% parse rate. This passes the coarse G1 formation-rate threshold,
-but it is not yet an attack-success result because generic `form_task` must be
-separated from `harmful_formation`.
+Current smoke-test status: an earlier `qwen/qwen3-coder-plus` run formed a task
+on 21/30 CORE cases with 100% parse rate, but that run is now treated only as a
+pipeline smoke test. It used a prompt that leaked evaluator metadata such as
+`target_harm`, `safe_policy`, variant labels, and attacker/instruction flags to
+the model. It must not be used as security evidence.
+
+The runner has since been changed to use an agent-visible field whitelist. The
+next valid run must report `harmful_formation` separately from generic
+`form_task` and must include benign / CTRL / CORE matched variants.
 
 Kill gates before scaling:
 
