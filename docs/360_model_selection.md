@@ -24,14 +24,15 @@ The useful checks were:
 
 ## Recommended Pilot Set
 
-Use these low-cost models first for the G1-G3 falsification pilot:
+Use these low-cost, cross-family models first for the G1-G3 falsification
+pilot. Do not use an all-Qwen model set for the main claim.
 
 | Role | Model | Current status | Notes |
 |---|---|---|---|
-| Default cheap model | `qwen/qwen3-coder-plus` | Works, about 1-2s, valid JSON | Good coding-domain and low-cost pilot model. |
-| Cheap general model | `alibaba/qwen-plus` | Works, about 2s, valid JSON | Useful second Qwen-family baseline with clean output. |
-| Cheap fast sanity model | `qwen/qwen-turbo` | Works, about 1-2s, valid JSON | Fast and cheap, but risk calibration may be weak. |
-| Optional behavior-diversity model | `bytedance/doubao-seed-2-0-mini` | Works, about 13s, valid JSON | Slower, but adds provider diversity without using expensive Claude. |
+| Qwen anchor | `qwen/qwen3-coder-plus` | Works, about 1-2s, valid JSON | Good coding-domain and low-cost pilot model. |
+| Doubao anchor | `bytedance/doubao-seed-1-6-flash` | Works, about 11s, valid JSON | Adds non-Qwen provider diversity with acceptable speed. |
+| DeepSeek anchor | `deepseek-v3.2` | Mixed but usable, about 21s when it returns | Adds non-Qwen reasoning family; use retry/timeout handling. |
+| Optional Qwen sanity check | `alibaba/qwen-plus` | Works, about 2s, valid JSON | Use as a within-family sanity check, not as an independent model family. |
 
 Do not use `anthropic/claude-opus-4.8` for the main pilot because it is too
 expensive for repeated scenario sweeps. At most, use it later on a tiny
@@ -52,9 +53,13 @@ These are usable but less attractive for the first pilot:
 
 | Model | Current status | Reason to delay |
 |---|---|---|
+| `qwen/qwen-turbo` | Works, about 1-2s | Cheap but risk calibration looked weak; use for debugging only. |
 | `bytedance/doubao-seed-2-1-pro` | Works, but slow in one run | Use later for Chinese/provider diversity if budget allows. |
 | `bytedance/doubao-seed-2-0-pro` | Works, but slow | Same as above. |
 | `bytedance/doubao-seed-2-0-lite` | Works, but slow in smoke test | Lower-cost diversity option if mini is insufficient. |
+| `bytedance/doubao-seed-2-0-mini` | Works, about 9-13s | Usable alternative to `doubao-seed-1-6-flash`. |
+| `bytedance/doubao-seed-1-6` | Works, about 17s | Usable but slower than the flash route. |
+| `360zhinao-turbo-doubao-seed-1-8` | Works, about 2s | Fast, but should be sanity-checked before main use. |
 | `360zhinao-turbo-doubao-seed-2-0-lite` | Works, but slow in smoke test | Similar role to Doubao lite. |
 | `qwen/qwen3-235b-a22b` | Works, around 15s | Returned schema values outside the requested enum, so needs normalization. |
 | `deepseek/deepseek-chat` | Mixed results | Sometimes fast, but also returned empty content in a repeated smoke test. |
@@ -79,7 +84,8 @@ These are usable but less attractive for the first pilot:
 | `deepseek/deepseek-v4-flash` | Returned empty content. |
 | `deepseek-chat-v3` | Returned fenced JSON and unsafe-looking action calibration in the smoke test. |
 | `360zhinao-turbo-qwen-plus` | Returned clean JSON but unsafe-looking action calibration in the smoke test. |
-| `bytedance/doubao-seed-1-6-flash` | Returned clean JSON but unsafe-looking action calibration in the smoke test. |
+| `360zhinao-pro-trans-deepseek` | Returned clean JSON but unsafe-looking action calibration in the smoke test. |
+| `360/volceapi-deepseek-v3` | Returned fenced JSON and unsafe-looking action calibration in the smoke test. |
 | `z-ai/glm-4.5-air` | Returned empty content. |
 | `z-ai/glm-4.6` | Timed out or returned fenced output. |
 | `z-ai/glm-5` | Returned empty content. |
@@ -91,11 +97,14 @@ For the first pilot, do not run many models. Run:
 
 ```text
 qwen/qwen3-coder-plus
-alibaba/qwen-plus
-qwen/qwen-turbo
+bytedance/doubao-seed-1-6-flash
+deepseek-v3.2
 ```
 
-This set is cheap enough for rapid iteration. If the cheap pilot passes G1-G3,
-rerun only a small representative subset with stronger calibration models such
-as `openai/gpt-5.1` or `anthropic-ccmax/claude-opus-4-6`. Do not spend Opus
-budget on the full first sweep.
+This set is cheap enough for rapid iteration while avoiding a single-family
+Qwen-only result. If DeepSeek is too flaky in the runner, replace it with
+`bytedance/doubao-seed-2-0-mini` for the first sweep and keep DeepSeek for a
+smaller retry-backed check. If the cheap cross-family pilot passes G1-G3, rerun
+only a small representative subset with stronger calibration models such as
+`openai/gpt-5.1` or `anthropic-ccmax/claude-opus-4-6`. Do not spend Opus budget
+on the full first sweep.
