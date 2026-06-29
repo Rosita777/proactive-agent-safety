@@ -117,6 +117,64 @@ The desired evidence is not "IPI defenses do not work." The desired evidence is:
 > task-formation boundary creates a utility/security tradeoff that they do not
 > close by themselves.
 
+## Target Venue and Expected Experiment Scale
+
+Current target venue: **IEEE Transactions on Dependable and Secure Computing
+(TDSC)**.
+
+TDSC is a journal venue, so the target should be broader than a short workshop
+or conference pilot. The expected full-paper experiment package should include:
+
+- a clear threat model and system model;
+- at least one realistic proactive-agent pipeline, not only prompt-only tests;
+- matched command-style IPI controls and instruction-free task-formation cases;
+- multiple attack families, including metadata/correlation, suppression or
+  flooding, reward/filter manipulation, and memory or retrieval effects if they
+  remain defensible;
+- several agent/model backbones and at least two implementation patterns;
+- strong IPI baselines such as Spotlighting, StruQ-style separation,
+  Instruction Hierarchy-style prompts, and CaMeL-inspired variants;
+- proactive-specific defenses such as provenance checks, evidence diversity,
+  confirmation, and intervention budgets;
+- utility metrics, not only attack success rates;
+- ablations, sensitivity analysis, and runtime/overhead measurements.
+
+Calibration from nearby TDSC/LLM-security papers:
+
+- TDSC publishes archival system/security work, so the evaluation should show
+  data, procedure, metrics, case studies, and reproducibility rather than a few
+  prompt examples.
+- ShadowCode, a TDSC-style external prompt-injection paper for code LLMs,
+  evaluates 31 threat cases across 3 programming languages, 3 open-source code
+  LLMs, and 2 commercial code-assistant applications, with attack baselines,
+  stealthiness, transfer, and defense analysis.
+- A TDSC LLM-generated-code security study evaluates 200 programming tasks
+  across 4 languages and 5 LLM families, producing 4,000 generated programs
+  plus unit-test and security-quality analyses.
+- Proactive-agent benchmarks are also moving beyond tiny demos: ProactiveAgent
+  reports ProactiveBench with 6,790 events and a 233-event test set across
+  coding, writing, and daily-life categories.
+
+Calibration references:
+[TDSC](https://www.computer.org/csdl/journal/tq),
+[ShadowCode](https://arxiv.org/abs/2407.09164),
+[LLM-generated-code security](https://arxiv.org/abs/2502.01853),
+[ProactiveAgent / ProactiveBench](https://openreview.net/forum?id=Vkq9ha0ETo).
+
+Working target scale for a mature TDSC submission:
+
+- 3 realistic workflow domains: coding/development, research/writing, and
+  calendar/email collaboration;
+- 150-300 structured scenarios, each with paired benign, command-style IPI,
+  and instruction-free task-formation variants;
+- 4-6 LLM/agent backbones or model configurations;
+- 6-8 defense configurations;
+- separate reporting for formation success, execution success, proactive
+  recall, false alarms, attention cost, and defense overhead.
+
+The immediate pilot can be much smaller, but it should be designed so the
+schema, metrics, and defenses scale toward this journal-level package.
+
 ## Repository Hygiene
 
 This repository should stay synchronized with the current research direction.
