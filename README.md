@@ -96,6 +96,9 @@ reward filtering, and user accept/reject/ignore feedback.
 - [Prompt injection literature map](docs/prompt_injection_lit_map.md):
   threat-model comparison against IPI work and analysis of how existing IPI
   defenses apply to proactive task formation.
+- [Pilot scenario data](data/pilot/scenarios_v0.json):
+  30 structured benign / CTRL / CORE scenarios for the first falsification
+  pilot, with a validator in [scripts/validate_pilot_scenarios.py](scripts/validate_pilot_scenarios.py).
 - [Opus discussions](docs/discussions/):
   raw consultation notes with Claude Opus 4.8 used for critique and pilot
   design. The latest TDSC-setting critique is
@@ -213,6 +216,12 @@ Pilot target:
   and CaMeL-permissive;
 - first-pass metrics: Formation-ASR, legitimate proactive recall, false alarms,
   attention cost, and provenance-audit pass rate.
+
+Validate the scenario file with:
+
+```bash
+python3 scripts/validate_pilot_scenarios.py
+```
 
 Kill gates before scaling:
 
