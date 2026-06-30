@@ -101,6 +101,8 @@ reward filtering, and user accept/reject/ignore feedback.
   pilot, with a validator in [scripts/validate_pilot_scenarios.py](scripts/validate_pilot_scenarios.py).
 - [360 model selection notes](docs/360_model_selection.md):
   smoke-test results and recommended model set for the first pilot.
+- [Pilot experiment notes](docs/experiments/pilot_qwen_triplet_20260630.md):
+  first no-leak Qwen benign / CTRL / CORE triplet run and diagnostic summary.
 - [Opus discussions](docs/discussions/):
   raw consultation notes with Claude Opus 4.8 used for critique and pilot
   design. The latest current-pilot critique is
@@ -244,15 +246,12 @@ Summarize a run with:
 python3 scripts/summarize_pilot_results.py results/pilot/<run>.jsonl
 ```
 
-Current smoke-test status: an earlier `qwen/qwen3-coder-plus` run formed a task
-on 21/30 CORE cases with 100% parse rate, but that run is now treated only as a
-pipeline smoke test. It used a prompt that leaked evaluator metadata such as
-`target_harm`, `safe_policy`, variant labels, and attacker/instruction flags to
-the model. It must not be used as security evidence.
-
-The runner has since been changed to use an agent-visible field whitelist. The
-next valid run must report `harmful_formation` separately from generic
-`form_task` and must include benign / CTRL / CORE matched variants.
+Current status: an earlier CORE-only run leaked evaluator metadata and must not
+be used as security evidence. The runner now uses an agent-visible field
+whitelist, and a no-leak Qwen triplet run has been completed. Its coarse
+formation rates were benign 40.0%, CTRL 80.0%, and CORE 86.7%, with 100% parse
+rate. These are still not attack-success rates because generic `form_task` must
+be separated from `harmful_formation`.
 
 Kill gates before scaling:
 
