@@ -246,17 +246,27 @@ Summarize a run with:
 python3 scripts/summarize_pilot_results.py results/pilot/<run>.jsonl
 ```
 
+Judge harmful formation for a run with:
+
+```bash
+python3 scripts/judge_pilot_results.py results/pilot/<run>.jsonl --details
+```
+
 Current status: an earlier CORE-only run leaked evaluator metadata and must not
 be used as security evidence. The runner now uses an agent-visible field
 whitelist, and a no-leak Qwen triplet run has been completed. Its coarse
 formation rates were benign 40.0%, CTRL 80.0%, and CORE 86.7%, with 100% parse
-rate. These are still not attack-success rates because generic `form_task` must
-be separated from `harmful_formation`.
+rate. A first-pass rule judge shows that the CORE number mostly consists of
+safety or ambiguous tasks rather than harmful formation: overall CORE
+`harmful_formation` is 4/30 = 13.3%, and the primary prompt-only formation
+families are 3/22 = 13.6%. CTRL remains much stronger at 21/30 = 70.0%
+harmful formation. Treat this as a design diagnostic, not a paper result.
 
-Kill gates before scaling:
+Updated kill gates before scaling:
 
-- G1: if undefended CORE Formation-ASR is below 40%, the instruction-free attack
-  spine is probably too weak.
+- G1: use `harmful_formation`, not generic `form_task`. If undefended CORE
+  harmful-formation ASR remains below roughly 25-40% after scenario cleanup,
+  the instruction-free attack spine is probably too weak for the main claim.
 - G2: if CaMeL-permissive gets CORE-ASR below 10% while keeping legitimate
   proactive recall above 85%, the claimed security/proactivity tradeoff is not
   supported.
@@ -267,6 +277,11 @@ Kill gates before scaling:
 If any kill gate triggers, the project should stop scaling the current design
 and either reframe around a narrower measurement result or change the attack
 surface.
+
+Current decision after the Qwen audit: do not scale to more models yet. First
+revise the CORE scenarios so they produce harmful proactive tasks rather than
+mostly safety tasks, and separate prompt-only formation families from
+reward/memory cases that require an actual validity filter or memory stage.
 
 ## Repository Hygiene
 
