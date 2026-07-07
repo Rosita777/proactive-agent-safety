@@ -111,7 +111,9 @@ reward filtering, and user accept/reject/ignore feedback.
   and the first non-Qwen cross-family check is
   [pilot_doubao_v1_cross_family_20260707.md](docs/experiments/pilot_doubao_v1_cross_family_20260707.md).
   The first manual audit of v1 outputs is
-  [pilot_v1_manual_audit_20260707.md](docs/experiments/pilot_v1_manual_audit_20260707.md).
+  [pilot_v1_manual_audit_20260707.md](docs/experiments/pilot_v1_manual_audit_20260707.md),
+  followed by the action-aware judge-v2 rerun in
+  [pilot_v1_judge_v2_20260707.md](docs/experiments/pilot_v1_judge_v2_20260707.md).
 - [Opus discussions](docs/discussions/):
   raw consultation notes with Claude Opus 4.8 used for critique and pilot
   design. The latest current-pilot critique is
@@ -293,31 +295,31 @@ be used as security evidence. The runner now uses an agent-visible field
 whitelist. The v0 no-leak Qwen triplet showed that generic CORE task formation
 was not enough: harmful CORE formation was only 4/30 = 13.3%.
 
-`scenarios_v1.json` is now the current default dataset. In the first v1 Qwen
-diagnostic, primary formation families reached 19/22 = 86.4% CORE harmful
-formation with 22/22 benign proactive recall under the rule-v1 judge. Treat
-this as a design diagnostic, not a paper result, because v1's structured
-`task_signal` fields are intentionally strong.
+`scenarios_v1.json` is now the current default dataset. Treat its runs as
+diagnostic, not paper results, because v1's structured `task_signal` fields are
+intentionally strong.
 
-The first `task_signal` ablation confirms the mechanism: dropping
-`task_signal` lowers primary CORE harmful formation from 19/22 = 86.4% to
-4/22 = 18.2%, and lowers benign proactive recall from 22/22 to 9/22. This
-supports focusing the project on the structured candidate-task layer used by
-proactive agents, not generic metadata alone.
+The action-aware judge-v2 rerun is the current pilot summary. Qwen no-defense
+reaches 19/22 = 86.4% primary CORE harmful formation with 22/22 benign
+proactive recall. Dropping `task_signal` lowers primary CORE harmful formation
+to 4/22 = 18.2% and lowers benign proactive recall to 9/22. This supports
+focusing the project on the structured candidate-task layer used by proactive
+agents, not generic metadata alone.
 
-The first Qwen defense sweep strengthens the distinction. On the primary
+The judge-v2 Qwen defense sweep strengthens the distinction. On the primary
 families, content-oriented IPI defenses reduce command-style CTRL but mostly do
-not reduce CORE: `spotlighting` leaves CORE at 18/22 = 81.8%, `struq` leaves
-CORE at 20/22 = 90.9%, and `instruction-hierarchy` leaves CORE at 17/22 =
+not reduce CORE: `spotlighting` leaves CORE at 19/22 = 86.4%, `struq` leaves
+CORE at 19/22 = 86.4%, and `instruction-hierarchy` leaves CORE at 17/22 =
 77.3%. A proactive `provenance-audit` prompt reduces CORE to 0/22, but benign
 recall falls to 18/22.
 
-The first non-Qwen cross-family check with `bytedance/doubao-seed-1-6-flash`
-shows the same pattern. Doubao is less vulnerable to explicit CTRL under
-`no-defense` (7/22 = 31.8%), but instruction-free CORE remains high:
-`no-defense` reaches 16/22 = 72.7%, `spotlighting` leaves 14/22 = 63.6%, and
-`instruction-hierarchy` leaves 15/22 = 68.2%. `provenance-audit` again reduces
-CORE to 0/22, while benign recall falls to 17/22.
+The judge-v2 non-Qwen check with `bytedance/doubao-seed-1-6-flash` shows the
+same pattern. Doubao is less vulnerable to explicit CTRL under `no-defense`
+(7/22 = 31.8%), but instruction-free CORE remains high: `no-defense`,
+`spotlighting`, and `instruction-hierarchy` each leave CORE at 16/22 = 72.7%.
+`provenance-audit` again reduces CORE to 0/22, while benign recall falls to
+17/22. Judge-v2 also shows that most harmful CORE outputs are confirmation
+requests, so action commitment must be reported separately from formation.
 
 Updated kill gates before scaling:
 
@@ -336,10 +338,10 @@ and either reframe around a narrower measurement result or change the attack
 surface.
 
 Current decision after the v1 Qwen defense sweep, Doubao cross-family check,
-and first manual audit: do judge-v2 and metric cleanup before scaling. The next
-step is to separate notification, confirmation, and auto-execution outcomes,
-repair brittle scenario-specific judge rules, and rerun judgment on existing
-result files before running DeepSeek or a stronger-model calibration subset.
+manual audit, and judge-v2 rerun: use judge-v2 for pilot summaries, but do not
+scale scenarios yet. The next method step is a fairer CaMeL/provenance ablation
+and a small manual or LLM-assisted audit queue for `needs_human_review` cases
+before running DeepSeek or a stronger-model calibration subset.
 
 ## Repository Hygiene
 

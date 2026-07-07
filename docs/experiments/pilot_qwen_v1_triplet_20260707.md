@@ -1,6 +1,8 @@
 # Pilot Qwen v1 Triplet Run, 2026-07-07
 
-Status: diagnostic pilot, not a paper result.
+Status: diagnostic pilot, not a paper result. The original tables used
+`rule_v1_20260707`; the current action-aware rerun is
+`docs/experiments/pilot_v1_judge_v2_20260707.md`.
 
 ## Purpose
 

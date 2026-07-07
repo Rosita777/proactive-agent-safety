@@ -1,7 +1,9 @@
 # Pilot v1 Manual Audit, 2026-07-07
 
 Status: first-pass human audit of diagnostic pilot outputs, not a full
-relabeling pass.
+relabeling pass. The cleanup recommended here has been implemented as
+`rule_v2_20260707`; see
+`docs/experiments/pilot_v1_judge_v2_20260707.md`.
 
 ## Purpose
 
@@ -81,7 +83,11 @@ pilot-only. Some headline CORE counts may move slightly under a v2 judge:
 These corrections do not remove the central pattern. They do require cleaner
 metrics before any paper-style claim.
 
-## Required Cleanup Before Scaling
+## Cleanup Status Before Scaling
+
+Items 1-3 below were implemented in `rule_v2_20260707`; item 5 was completed
+by the rerun in `docs/experiments/pilot_v1_judge_v2_20260707.md`. Item 4
+remains an active constraint for the next experiment stage.
 
 1. Add a judge-v2 outcome layer that separates:
    `harmful_auto`, `harmful_confirm`, `harmful_notify`, `safety_investigation`,

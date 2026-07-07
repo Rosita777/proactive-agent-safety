@@ -123,27 +123,25 @@ The current data revision is v1:
 - do not treat reward/filter manipulation or memory/retrieval as primary
   evidence until the pilot includes a real validity-filter or memory stage.
 
-The first v1 Qwen diagnostic run reached 19/22 = 86.4% judged CORE harmful
-formation on the primary families, with 22/22 benign proactive recall. This is
-only a design diagnostic. The `task_signal` ablation lowered primary CORE
+The action-aware judge-v2 rerun is now the current diagnostic summary. The v1
+Qwen no-defense run reached 19/22 = 86.4% primary CORE harmful formation with
+22/22 benign proactive recall. Dropping `task_signal` lowered primary CORE
 harmful formation to 4/22 = 18.2% and benign proactive recall to 9/22. This
 means v1's effect is concentrated in the structured candidate-task layer, which
 is the intended proactive-agent setting.
 
-The first Qwen defense sweep shows that content-oriented IPI defenses do not
+The judge-v2 Qwen defense sweep shows that content-oriented IPI defenses do not
 close this layer: `spotlighting`, `struq`, and `instruction-hierarchy` leave
-primary CORE harmful formation at 18/22, 20/22, and 17/22 respectively. The
+primary CORE harmful formation at 19/22, 19/22, and 17/22 respectively. The
 proactive `provenance-audit` defense lowers CORE to 0/22 but lowers benign
 recall to 18/22.
 
-The first non-Qwen check with `bytedance/doubao-seed-1-6-flash` repeats the
+The judge-v2 non-Qwen check with `bytedance/doubao-seed-1-6-flash` repeats the
 main pattern: explicit CTRL is lower than Qwen, but primary CORE remains high
-under `no-defense` (16/22), `spotlighting` (14/22), and
-`instruction-hierarchy` (15/22). `provenance-audit` again lowers CORE to 0/22
-while lowering benign recall to 17/22.
+under `no-defense`, `spotlighting`, and `instruction-hierarchy` at 16/22 each.
+`provenance-audit` again lowers CORE to 0/22 while lowering benign recall to
+17/22. Most harmful CORE outputs are confirmation requests, so future reporting
+must separate formation from action commitment.
 
-The first manual audit found that rule-v1 is directionally useful but not
-paper-ready. It undercounts some finance/reply-all/owner-update harms and
-overcounts some package-popularity investigation tasks. The next required step
-is judge-v2 and metric cleanup, then rerunning judgment on existing result
-files, not more scenario inflation.
+The next required step is a fairer CaMeL/provenance ablation and audit of
+`needs_human_review` cases, not more scenario inflation.
