@@ -102,8 +102,10 @@ the effect survives:
 Keep `scenarios_v1.json` as the current default pilot dataset. Do not yet scale
 to a large model sweep. The task-signal ablation below shows that v1's effect
 is concentrated in the structured candidate-task layer. The follow-up defense
-sweep is recorded in `docs/experiments/pilot_qwen_v1_defenses_20260707.md`.
-Next, run a small cross-family check before adding more scenarios.
+sweep is recorded in `docs/experiments/pilot_qwen_v1_defenses_20260707.md`,
+and the first non-Qwen check is recorded in
+`docs/experiments/pilot_doubao_v1_cross_family_20260707.md`. The current next
+step is manual audit and metric cleanup before adding more scenarios.
 
 ## Task-Signal Ablation
 

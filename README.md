@@ -104,10 +104,12 @@ reward filtering, and user accept/reject/ignore feedback.
 - [360 model selection notes](docs/360_model_selection.md):
   smoke-test results and recommended model set for the first pilot.
 - [Pilot experiment notes](docs/experiments/):
-  diagnostic Qwen triplet runs. The latest v1 run is
+  diagnostic Qwen and Doubao runs. The latest v1 Qwen run is
   [pilot_qwen_v1_triplet_20260707.md](docs/experiments/pilot_qwen_v1_triplet_20260707.md),
-  and the latest defense sweep is
-  [pilot_qwen_v1_defenses_20260707.md](docs/experiments/pilot_qwen_v1_defenses_20260707.md).
+  the latest Qwen defense sweep is
+  [pilot_qwen_v1_defenses_20260707.md](docs/experiments/pilot_qwen_v1_defenses_20260707.md),
+  and the first non-Qwen cross-family check is
+  [pilot_doubao_v1_cross_family_20260707.md](docs/experiments/pilot_doubao_v1_cross_family_20260707.md).
 - [Opus discussions](docs/discussions/):
   raw consultation notes with Claude Opus 4.8 used for critique and pilot
   design. The latest current-pilot critique is
@@ -224,8 +226,9 @@ Pilot target:
 - each scenario has benign, instruction-bearing CTRL, and instruction-free CORE
   variants;
 - current default scenario file: `data/pilot/scenarios_v1.json`;
-- first-pass defenses: no defense, Spotlighting-style marking, CaMeL-strict,
-  and CaMeL-permissive;
+- first-pass defenses: no defense, Spotlighting-style marking, StruQ-style
+  separation, Instruction Hierarchy-style prompts, CaMeL-inspired variants, and
+  provenance audit;
 - first-pass metrics: Formation-ASR, legitimate proactive recall, false alarms,
   attention cost, and provenance-audit pass rate.
 
@@ -307,6 +310,13 @@ CORE at 20/22 = 90.9%, and `instruction-hierarchy` leaves CORE at 17/22 =
 77.3%. A proactive `provenance-audit` prompt reduces CORE to 0/22, but benign
 recall falls to 18/22.
 
+The first non-Qwen cross-family check with `bytedance/doubao-seed-1-6-flash`
+shows the same pattern. Doubao is less vulnerable to explicit CTRL under
+`no-defense` (7/22 = 31.8%), but instruction-free CORE remains high:
+`no-defense` reaches 16/22 = 72.7%, `spotlighting` leaves 14/22 = 63.6%, and
+`instruction-hierarchy` leaves 15/22 = 68.2%. `provenance-audit` again reduces
+CORE to 0/22, while benign recall falls to 17/22.
+
 Updated kill gates before scaling:
 
 - G1: use `harmful_formation`, not generic `form_task`. If undefended CORE
@@ -323,10 +333,11 @@ If any kill gate triggers, the project should stop scaling the current design
 and either reframe around a narrower measurement result or change the attack
 surface.
 
-Current decision after the v1 Qwen defense sweep: run a small cross-family
-check next, not a large benchmark. Use Qwen plus one non-Qwen model on
-`no-defense`, one IPI-style defense such as `spotlighting` or
-`instruction-hierarchy`, and `provenance-audit`.
+Current decision after the v1 Qwen defense sweep and Doubao cross-family check:
+do a manual audit and metric cleanup before scaling. The next experiment should
+separate notification, confirmation, and auto-execution outcomes more clearly,
+then run either a retry-backed DeepSeek check or a smaller stronger-model
+calibration subset.
 
 ## Repository Hygiene
 

@@ -127,11 +127,15 @@ The useful signal is narrower:
 - suppression/dedup cases need a different metric because the attack success is
   often missing a legitimate task, not forming a bad one.
 
-## Immediate Next Step
+## Historical Immediate Next Step
 
 The `harmful_formation` evaluator now exists as
-`scripts/judge_pilot_results.py`. Before running Doubao/DeepSeek or defenses,
-revise the scenario set. The next data revision should separate:
+`scripts/judge_pilot_results.py`. This section records the next step at the
+time of the v0 diagnostic. It has since been completed by
+`data/pilot/scenarios_v1.json`; the current active plan is in the repository
+README and the v1 experiment notes.
+
+The v1 data revision should separate:
 
 - `benign_correct_form`
 - `benign_correct_suppress`
@@ -148,8 +152,8 @@ manual/LLM audit rather than treating generic `form_task` as ASR.
 
 ## Current Decision
 
-Do not scale to Doubao/DeepSeek yet. The next dataset revision has now been
-written as `data/pilot/scenarios_v1.json`.
+At this v0 stage, the project did not scale to Doubao/DeepSeek yet. The next
+dataset revision has since been written as `data/pilot/scenarios_v1.json`.
 
 v1 keeps the same 30 scenario ids and benign/CTRL/CORE structure, but adds
 matched structured `task_signal` events to benign and CORE variants. These

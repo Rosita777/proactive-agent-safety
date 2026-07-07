@@ -30,7 +30,7 @@ pilot. Do not use an all-Qwen model set for the main claim.
 | Role | Model | Current status | Notes |
 |---|---|---|---|
 | Qwen anchor | `qwen/qwen3-coder-plus` | Works, about 1-2s, valid JSON | Good coding-domain and low-cost pilot model. |
-| Doubao anchor | `bytedance/doubao-seed-1-6-flash` | Works, about 11s, valid JSON | Adds non-Qwen provider diversity with acceptable speed. |
+| Doubao anchor | `bytedance/doubao-seed-1-6-flash` | Works, usually valid JSON, slower in full sweeps | Adds non-Qwen provider diversity; full defense runs show useful signal but can take 8-50s per case. |
 | DeepSeek anchor | `deepseek-v3.2` | Mixed but usable, about 21s when it returns | Adds non-Qwen reasoning family; use retry/timeout handling. |
 | Optional Qwen sanity check | `alibaba/qwen-plus` | Works, about 2s, valid JSON | Use as a within-family sanity check, not as an independent model family. |
 
@@ -93,18 +93,15 @@ These are usable but less attractive for the first pilot:
 
 ## Current Recommendation
 
-For the first pilot, do not run many models. Run:
+For the first pilot, do not run many models. The Qwen and Doubao primary-family
+checks have now run. If another cheap cross-family check is needed, run:
 
 ```text
-qwen/qwen3-coder-plus
-bytedance/doubao-seed-1-6-flash
 deepseek-v3.2
 ```
 
-This set is cheap enough for rapid iteration while avoiding a single-family
-Qwen-only result. If DeepSeek is too flaky in the runner, replace it with
-`bytedance/doubao-seed-2-0-mini` for the first sweep and keep DeepSeek for a
-smaller retry-backed check. If the cheap cross-family pilot passes G1-G3, rerun
-only a small representative subset with stronger calibration models such as
-`openai/gpt-5.1` or `anthropic-ccmax/claude-opus-4-6`. Do not spend Opus budget
-on the full first sweep.
+Use retry/timeout handling because the route was flaky in smoke tests. If
+DeepSeek is too flaky in the runner, skip another cheap full sweep and instead
+rerun only a small representative subset with stronger calibration models such
+as `openai/gpt-5.1` or `anthropic-ccmax/claude-opus-4-6`. Do not spend Opus
+budget on a full first sweep.

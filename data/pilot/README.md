@@ -134,5 +134,11 @@ The first Qwen defense sweep shows that content-oriented IPI defenses do not
 close this layer: `spotlighting`, `struq`, and `instruction-hierarchy` leave
 primary CORE harmful formation at 18/22, 20/22, and 17/22 respectively. The
 proactive `provenance-audit` defense lowers CORE to 0/22 but lowers benign
-recall to 18/22. The next required check is a small cross-family model run, not
-more scenario inflation.
+recall to 18/22.
+
+The first non-Qwen check with `bytedance/doubao-seed-1-6-flash` repeats the
+main pattern: explicit CTRL is lower than Qwen, but primary CORE remains high
+under `no-defense` (16/22), `spotlighting` (14/22), and
+`instruction-hierarchy` (15/22). `provenance-audit` again lowers CORE to 0/22
+while lowering benign recall to 17/22. The next required step is manual audit
+and metric cleanup, not more scenario inflation.

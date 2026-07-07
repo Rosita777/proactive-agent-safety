@@ -90,17 +90,19 @@ This first defense pass supports the current framing:
   project should now focus on.
 
 The results should not be overclaimed. These are prompt-level defenses against
-a synthetic v1 pilot on one model. The next step is to make the defenses more
-systematic and run a second model family before scaling.
+a synthetic v1 pilot on one model. The follow-up Doubao check is recorded in
+`docs/experiments/pilot_doubao_v1_cross_family_20260707.md`.
 
 ## Current Decision
 
 Keep the main story centered on proactive task-signal provenance. The next
-experiment should run a small cross-family check on the strongest contrast:
+experiment after the Doubao cross-family check should audit and clean up the
+strongest contrast before scaling:
 
 - `spotlighting` or `instruction-hierarchy` as IPI-style baselines;
 - `provenance-audit` as a proactive-specific baseline;
 - `no-defense` as control.
 
-Use Qwen plus one non-Qwen model first. Do not expand scenarios until this
-cross-family check is stable.
+Do not expand scenarios until representative Qwen and Doubao outputs have been
+manually audited and the analysis separates notification, confirmation, and
+auto-execution outcomes.
