@@ -110,6 +110,8 @@ reward filtering, and user accept/reject/ignore feedback.
   [pilot_qwen_v1_defenses_20260707.md](docs/experiments/pilot_qwen_v1_defenses_20260707.md),
   and the first non-Qwen cross-family check is
   [pilot_doubao_v1_cross_family_20260707.md](docs/experiments/pilot_doubao_v1_cross_family_20260707.md).
+  The first manual audit of v1 outputs is
+  [pilot_v1_manual_audit_20260707.md](docs/experiments/pilot_v1_manual_audit_20260707.md).
 - [Opus discussions](docs/discussions/):
   raw consultation notes with Claude Opus 4.8 used for critique and pilot
   design. The latest current-pilot critique is
@@ -333,11 +335,11 @@ If any kill gate triggers, the project should stop scaling the current design
 and either reframe around a narrower measurement result or change the attack
 surface.
 
-Current decision after the v1 Qwen defense sweep and Doubao cross-family check:
-do a manual audit and metric cleanup before scaling. The next experiment should
-separate notification, confirmation, and auto-execution outcomes more clearly,
-then run either a retry-backed DeepSeek check or a smaller stronger-model
-calibration subset.
+Current decision after the v1 Qwen defense sweep, Doubao cross-family check,
+and first manual audit: do judge-v2 and metric cleanup before scaling. The next
+step is to separate notification, confirmation, and auto-execution outcomes,
+repair brittle scenario-specific judge rules, and rerun judgment on existing
+result files before running DeepSeek or a stronger-model calibration subset.
 
 ## Repository Hygiene
 
