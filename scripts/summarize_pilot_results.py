@@ -77,14 +77,17 @@ def main() -> None:
         raise SystemExit("No records found")
 
     by_model_variant: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
+    by_prompt_variant: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
     by_variant: dict[tuple[str], list[dict[str, Any]]] = defaultdict(list)
     by_family: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
     for record in records:
         by_model_variant[(record["model"], record["variant"])].append(record)
+        by_prompt_variant[(record.get("prompt_mode", ""), record["variant"])].append(record)
         by_variant[(record["variant"],)].append(record)
         by_family[(record["variant"], record["family"])].append(record)
 
     print(f"records: {len(records)}")
+    print_table("By prompt mode and variant", by_prompt_variant, ["prompt_mode", "variant"])
     print_table("By model and variant", by_model_variant, ["model", "variant"])
     print_table("By variant", by_variant, ["variant"])
     print_table("By variant and family", by_family, ["variant", "family"])

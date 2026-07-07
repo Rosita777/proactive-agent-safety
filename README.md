@@ -105,7 +105,9 @@ reward filtering, and user accept/reject/ignore feedback.
   smoke-test results and recommended model set for the first pilot.
 - [Pilot experiment notes](docs/experiments/):
   diagnostic Qwen triplet runs. The latest v1 run is
-  [pilot_qwen_v1_triplet_20260707.md](docs/experiments/pilot_qwen_v1_triplet_20260707.md).
+  [pilot_qwen_v1_triplet_20260707.md](docs/experiments/pilot_qwen_v1_triplet_20260707.md),
+  and the latest defense sweep is
+  [pilot_qwen_v1_defenses_20260707.md](docs/experiments/pilot_qwen_v1_defenses_20260707.md).
 - [Opus discussions](docs/discussions/):
   raw consultation notes with Claude Opus 4.8 used for critique and pilot
   design. The latest current-pilot critique is
@@ -256,6 +258,19 @@ python3 scripts/run_pilot_360.py \
   --retries 1
 ```
 
+Run a defense pass on the primary families with:
+
+```bash
+python3 scripts/run_pilot_360.py \
+  --models qwen/qwen3-coder-plus \
+  --variants benign ctrl core \
+  --family metadata_correlation \
+  --family cross_app_identity_confusion \
+  --prompt-mode spotlighting \
+  --timeout 60 \
+  --retries 1
+```
+
 Summarize a run with:
 
 ```bash
@@ -285,6 +300,13 @@ The first `task_signal` ablation confirms the mechanism: dropping
 supports focusing the project on the structured candidate-task layer used by
 proactive agents, not generic metadata alone.
 
+The first Qwen defense sweep strengthens the distinction. On the primary
+families, content-oriented IPI defenses reduce command-style CTRL but mostly do
+not reduce CORE: `spotlighting` leaves CORE at 18/22 = 81.8%, `struq` leaves
+CORE at 20/22 = 90.9%, and `instruction-hierarchy` leaves CORE at 17/22 =
+77.3%. A proactive `provenance-audit` prompt reduces CORE to 0/22, but benign
+recall falls to 18/22.
+
 Updated kill gates before scaling:
 
 - G1: use `harmful_formation`, not generic `form_task`. If undefended CORE
@@ -301,9 +323,10 @@ If any kill gate triggers, the project should stop scaling the current design
 and either reframe around a narrower measurement result or change the attack
 surface.
 
-Current decision after the v1 Qwen audit: do not scale to a large model sweep
-yet. Next run the first IPI/proactive defense baselines on v1. Scale to
-Doubao/DeepSeek only if the effect survives those checks.
+Current decision after the v1 Qwen defense sweep: run a small cross-family
+check next, not a large benchmark. Use Qwen plus one non-Qwen model on
+`no-defense`, one IPI-style defense such as `spotlighting` or
+`instruction-hierarchy`, and `provenance-audit`.
 
 ## Repository Hygiene
 

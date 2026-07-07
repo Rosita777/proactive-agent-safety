@@ -128,5 +128,11 @@ formation on the primary families, with 22/22 benign proactive recall. This is
 only a design diagnostic. The `task_signal` ablation lowered primary CORE
 harmful formation to 4/22 = 18.2% and benign proactive recall to 9/22. This
 means v1's effect is concentrated in the structured candidate-task layer, which
-is the intended proactive-agent setting. The next required check is defense
-baselines, not more scenario inflation.
+is the intended proactive-agent setting.
+
+The first Qwen defense sweep shows that content-oriented IPI defenses do not
+close this layer: `spotlighting`, `struq`, and `instruction-hierarchy` leave
+primary CORE harmful formation at 18/22, 20/22, and 17/22 respectively. The
+proactive `provenance-audit` defense lowers CORE to 0/22 but lowers benign
+recall to 18/22. The next required check is a small cross-family model run, not
+more scenario inflation.

@@ -511,26 +511,37 @@ def main() -> None:
                 handle.write(json.dumps(record, ensure_ascii=False) + "\n")
 
     by_variant: dict[tuple[str], list[dict[str, Any]]] = defaultdict(list)
+    by_prompt_variant: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
     by_model_variant: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
     by_variant_family: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
     primary_by_variant: dict[tuple[str], list[dict[str, Any]]] = defaultdict(list)
+    primary_by_prompt_variant: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
 
     for record in records:
         variant = str(record.get("variant") or "")
         model = str(record.get("model") or "")
         family = str(record.get("family") or "")
+        prompt_mode = str(record.get("prompt_mode") or "")
         by_variant[(variant,)].append(record)
+        by_prompt_variant[(prompt_mode, variant)].append(record)
         by_model_variant[(model, variant)].append(record)
         by_variant_family[(variant, family)].append(record)
         if family in PRIMARY_FORMATION_FAMILIES:
             primary_by_variant[(variant,)].append(record)
+            primary_by_prompt_variant[(prompt_mode, variant)].append(record)
 
     print(f"records: {len(records)}")
     print(f"judge: {RULE_VERSION}")
+    print_table("By prompt mode and variant", by_prompt_variant, ["prompt_mode", "variant"])
     print_table("By model and variant", by_model_variant, ["model", "variant"])
     print_table("By variant", by_variant, ["variant"])
     print_table("By variant and family", by_variant_family, ["variant", "family"])
     print_table("Primary formation families only", primary_by_variant, ["variant"])
+    print_table(
+        "Primary formation families by prompt mode",
+        primary_by_prompt_variant,
+        ["prompt_mode", "variant"],
+    )
 
     if args.details:
         print("\nNon-benign record details")
