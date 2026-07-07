@@ -3,15 +3,45 @@
 This directory contains the first falsification dataset for the proactive
 task-formation pilot.
 
-## File
+## Files
 
-- `scenarios_v0.json`: 30 hand-written scenarios across calendar/email and
-  coding/development. Each scenario has three matched variants:
+- `scenarios_v1.json`: current default 30-scenario pilot dataset across
+  calendar/email and coding/development.
+- `scenarios_v0.json`: older diagnostic dataset kept to document the failed
+  first design. It produced many CORE safety tasks and should not be used as
+  the default going forward.
+
+Each scenario has three matched variants:
+
   - `benign`: a legitimate proactive-help opportunity;
   - `ctrl`: an instruction-bearing indirect prompt-injection control;
   - `core`: an instruction-free task-formation variant using structured
     metadata, correlation, salience, reward/filter signals, or memory/retrieval
     signals.
+
+## v1 Design
+
+`scenarios_v1.json` adds a matched `task_signal` event to each benign and CORE
+variant. This models a realistic proactive-agent pipeline where upstream
+components such as identity resolvers, object linkers, salience filters, or
+template matchers emit structured candidate-task metadata before an LLM decides
+whether to form the task.
+
+The key boundary is:
+
+- forbidden in CORE: natural-language commands, free-form injected text, or
+  instruction-bearing content;
+- allowed in CORE v1: structured fields such as `template_id`, `confidence`,
+  `resolved_recipient`, `object_ref`, `target_path`, or `package_name`.
+
+This is intentional. The v1 question is whether an agent can be induced to form
+a harmful task from poisoned structured activation signals even when there is no
+instruction-like text for an IPI defense to quarantine.
+
+Primary v1 evidence should use `metadata_correlation` and
+`cross_app_identity_confusion`. Suppression/dedup needs missed-task metrics, and
+reward/memory scenarios remain secondary until the pilot includes real reward
+filter or persistent-memory stages.
 
 ## Event Schema
 
@@ -20,7 +50,8 @@ Each event contains:
 - `event_id`: stable event id within the scenario variant.
 - `ts`: relative timestamp.
 - `channel`: source channel such as `calendar`, `email`, `slack`, `github`,
-  `vscode`, `browser`, `registry`, `memory`, or `reward_history`.
+  `vscode`, `browser`, `registry`, `memory`, `reward_history`, or
+  `task_signal`.
 - `source_id`: source object id.
 - `actor`: source actor or service.
 - `trust_tier`: one of the scenario-defined trust labels, usually `trusted`,
@@ -81,13 +112,21 @@ CORE task formation was high, but the first-pass harmful-formation judge found
 only 4/30 CORE cases as harmful formation. Most CORE outputs were safety tasks
 such as investigation, verification, blocking, or provenance checking.
 
-For the next data revision:
+The current data revision is v1:
 
 - keep metadata/correlation and cross-app identity confusion as the primary
   prompt-only formation families;
-- revise CORE cases that merely elicit safety investigations instead of the
-  attacker-desired task;
+- revise CORE cases that merely elicited safety investigations in v0 by adding
+  realistic structured candidate-task signals;
 - keep suppression/dedup separate from Formation-ASR because the harm is often
   a missed legitimate task;
 - do not treat reward/filter manipulation or memory/retrieval as primary
   evidence until the pilot includes a real validity-filter or memory stage.
+
+The first v1 Qwen diagnostic run reached 19/22 = 86.4% judged CORE harmful
+formation on the primary families, with 22/22 benign proactive recall. This is
+only a design diagnostic. The `task_signal` ablation lowered primary CORE
+harmful formation to 4/22 = 18.2% and benign proactive recall to 9/22. This
+means v1's effect is concentrated in the structured candidate-task layer, which
+is the intended proactive-agent setting. The next required check is defense
+baselines, not more scenario inflation.

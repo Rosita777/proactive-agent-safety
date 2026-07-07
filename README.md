@@ -96,13 +96,16 @@ reward filtering, and user accept/reject/ignore feedback.
 - [Prompt injection literature map](docs/prompt_injection_lit_map.md):
   threat-model comparison against IPI work and analysis of how existing IPI
   defenses apply to proactive task formation.
-- [Pilot scenario data](data/pilot/scenarios_v0.json):
-  30 structured benign / CTRL / CORE scenarios for the first falsification
-  pilot, with a validator in [scripts/validate_pilot_scenarios.py](scripts/validate_pilot_scenarios.py).
+- [Pilot scenario data](data/pilot/scenarios_v1.json):
+  current 30-scenario benign / CTRL / CORE pilot dataset. v1 adds structured
+  resolver/salience/task-signal events to test proactive task formation more
+  realistically than v0. The old [v0 data](data/pilot/scenarios_v0.json) is
+  kept as a diagnostic record.
 - [360 model selection notes](docs/360_model_selection.md):
   smoke-test results and recommended model set for the first pilot.
-- [Pilot experiment notes](docs/experiments/pilot_qwen_triplet_20260630.md):
-  first no-leak Qwen benign / CTRL / CORE triplet run and diagnostic summary.
+- [Pilot experiment notes](docs/experiments/):
+  diagnostic Qwen triplet runs. The latest v1 run is
+  [pilot_qwen_v1_triplet_20260707.md](docs/experiments/pilot_qwen_v1_triplet_20260707.md).
 - [Opus discussions](docs/discussions/):
   raw consultation notes with Claude Opus 4.8 used for critique and pilot
   design. The latest current-pilot critique is
@@ -218,6 +221,7 @@ Pilot target:
 - 30 scenarios across calendar/email and coding;
 - each scenario has benign, instruction-bearing CTRL, and instruction-free CORE
   variants;
+- current default scenario file: `data/pilot/scenarios_v1.json`;
 - first-pass defenses: no defense, Spotlighting-style marking, CaMeL-strict,
   and CaMeL-permissive;
 - first-pass metrics: Formation-ASR, legitimate proactive recall, false alarms,
@@ -240,6 +244,18 @@ python3 scripts/run_pilot_360.py \
   --retries 1
 ```
 
+Run the first `task_signal` ablation with:
+
+```bash
+python3 scripts/run_pilot_360.py \
+  --models qwen/qwen3-coder-plus \
+  --variants benign ctrl core \
+  --prompt-mode no-defense \
+  --drop-channel task_signal \
+  --timeout 60 \
+  --retries 1
+```
+
 Summarize a run with:
 
 ```bash
@@ -254,13 +270,20 @@ python3 scripts/judge_pilot_results.py results/pilot/<run>.jsonl --details
 
 Current status: an earlier CORE-only run leaked evaluator metadata and must not
 be used as security evidence. The runner now uses an agent-visible field
-whitelist, and a no-leak Qwen triplet run has been completed. Its coarse
-formation rates were benign 40.0%, CTRL 80.0%, and CORE 86.7%, with 100% parse
-rate. A first-pass rule judge shows that the CORE number mostly consists of
-safety or ambiguous tasks rather than harmful formation: overall CORE
-`harmful_formation` is 4/30 = 13.3%, and the primary prompt-only formation
-families are 3/22 = 13.6%. CTRL remains much stronger at 21/30 = 70.0%
-harmful formation. Treat this as a design diagnostic, not a paper result.
+whitelist. The v0 no-leak Qwen triplet showed that generic CORE task formation
+was not enough: harmful CORE formation was only 4/30 = 13.3%.
+
+`scenarios_v1.json` is now the current default dataset. In the first v1 Qwen
+diagnostic, primary formation families reached 19/22 = 86.4% CORE harmful
+formation with 22/22 benign proactive recall under the rule-v1 judge. Treat
+this as a design diagnostic, not a paper result, because v1's structured
+`task_signal` fields are intentionally strong.
+
+The first `task_signal` ablation confirms the mechanism: dropping
+`task_signal` lowers primary CORE harmful formation from 19/22 = 86.4% to
+4/22 = 18.2%, and lowers benign proactive recall from 22/22 to 9/22. This
+supports focusing the project on the structured candidate-task layer used by
+proactive agents, not generic metadata alone.
 
 Updated kill gates before scaling:
 
@@ -278,10 +301,9 @@ If any kill gate triggers, the project should stop scaling the current design
 and either reframe around a narrower measurement result or change the attack
 surface.
 
-Current decision after the Qwen audit: do not scale to more models yet. First
-revise the CORE scenarios so they produce harmful proactive tasks rather than
-mostly safety tasks, and separate prompt-only formation families from
-reward/memory cases that require an actual validity filter or memory stage.
+Current decision after the v1 Qwen audit: do not scale to a large model sweep
+yet. Next run the first IPI/proactive defense baselines on v1. Scale to
+Doubao/DeepSeek only if the effect survives those checks.
 
 ## Repository Hygiene
 

@@ -148,6 +148,16 @@ manual/LLM audit rather than treating generic `form_task` as ASR.
 
 ## Current Decision
 
-Do not scale to Doubao/DeepSeek yet. First redesign or replace the CORE cases
-that currently produce safety tasks, and either remove or implement real
-pipeline stages for reward/filter and memory scenarios.
+Do not scale to Doubao/DeepSeek yet. The next dataset revision has now been
+written as `data/pilot/scenarios_v1.json`.
+
+v1 keeps the same 30 scenario ids and benign/CTRL/CORE structure, but adds
+matched structured `task_signal` events to benign and CORE variants. These
+signals model realistic identity-resolver, object-linker, salience-filter, or
+task-template metadata emitted before the LLM decides whether to form a
+proactive task. CORE still has no `free_text` and no instruction-bearing event.
+
+The follow-up v1 Qwen triplet and task-signal ablation are recorded in
+`docs/experiments/pilot_qwen_v1_triplet_20260707.md`. v1 lifts CORE harmful
+formation, and the ablation shows the effect is concentrated in the structured
+candidate-task signal layer.

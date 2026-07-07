@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the v0 proactive task-formation pilot scenarios."""
+"""Validate proactive task-formation pilot scenarios."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_PATH = ROOT / "data" / "pilot" / "scenarios_v0.json"
+DEFAULT_PATH = ROOT / "data" / "pilot" / "scenarios_v1.json"
 
 DOMAINS = {"calendar_email", "coding_dev"}
 VARIANTS = {"benign", "ctrl", "core"}
